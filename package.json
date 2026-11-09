@@ -11,7 +11,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test src/lib/*.test.js"
+    "test": "node --test src/lib/*.test.js src/pages/Latihan/*.test.js"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",
