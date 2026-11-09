@@ -1,0 +1,91 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Token warna dalam kanal RGB supaya bisa dipakai Tailwind dengan opacity. */
+:root {
+  --c-canvas: 248 249 250;
+  --c-surface: 255 255 255;
+  --c-subtle: 240 242 241;
+  --c-ink: 26 43 39;
+  --c-on-ink: 255 255 255;
+  --c-muted: 74 93 88;
+  --c-line: 217 222 219;
+  --c-brand: 13 110 93;
+  --c-brand-ink: 13 110 93;
+  --c-brand-tint: 227 241 239;
+  --c-brand-deep: 9 82 69;
+  --c-danger: 192 38 38;
+  --c-danger-ink: 192 38 38;
+  --c-danger-tint: 253 233 231;
+  --c-notice: 255 241 214;
+  --c-notice-ink: 107 74 10;
+  --c-mark-warn: 255 217 160;
+  --c-mark-danger: 246 181 173;
+  --c-today: 180 83 9;
+  color-scheme: light;
+}
+
+/* Mode gelap otomatis. Warna teks diterangkan supaya kontras tetap WCAG AA. */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --c-canvas: 14 22 20;
+    --c-surface: 23 33 31;
+    --c-subtle: 34 47 44;
+    --c-ink: 230 238 236;
+    --c-on-ink: 14 22 20;
+    --c-muted: 168 186 181;
+    --c-line: 58 74 70;
+    --c-brand: 13 110 93;
+    --c-brand-ink: 110 211 192;
+    --c-brand-tint: 22 56 50;
+    --c-brand-deep: 8 70 59;
+    --c-danger: 192 38 38;
+    --c-danger-ink: 255 138 128;
+    --c-danger-tint: 58 28 26;
+    --c-notice: 58 46 18;
+    --c-notice-ink: 245 213 138;
+    --c-mark-warn: 110 80 20;
+    --c-mark-danger: 120 40 34;
+    --c-today: 245 158 11;
+    color-scheme: dark;
+  }
+}
+
+@layer base {
+  body {
+    @apply bg-canvas font-sans text-ink antialiased;
+    font-size: 16px;
+  }
+
+  :focus-visible {
+    outline: 3px solid rgb(var(--c-ink));
+    outline-offset: 3px;
+  }
+
+  /* Di atas kartu teal, cincin fokus putih supaya tetap terlihat. */
+  .on-brand :focus-visible {
+    outline-color: #ffffff;
+  }
+
+  [data-main-heading]:focus {
+    outline: none;
+  }
+
+  mark {
+    color: inherit;
+    border-radius: 3px;
+    padding: 1px 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
