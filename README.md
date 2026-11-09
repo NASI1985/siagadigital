@@ -3,7 +3,9 @@
 Platform edukasi dan tanggap insiden keamanan digital untuk anak muda Indonesia.
 Fiturnya ada tiga: **Cek Dulu** (periksa pesan atau link mencurigakan), **Latihan** (simulasi
 chat dengan penipu), dan **Bantuan** (langkah darurat, pesan peringatan, dan checklist keamanan
-akun).
+akun). Ditambah **SiagaBot**, asisten tanya-jawab di pojok kanan bawah setiap halaman.
+
+Versi online: https://siagadigital.vercel.app
 
 Aplikasi ini 100% berjalan di browser: tanpa login, tanpa backend, dan teks yang kamu tempel
 tidak dikirim ke server mana pun. Satu-satunya request jaringan adalah Google Fonts.
@@ -47,18 +49,44 @@ src/
     scenarios.js        6 skenario latihan
     emergency.js        kejadian, platform, kanal lapor, template pesan peringatan
     securityChecklist.js item checklist keamanan akun
+    chatbot.js          kata kunci & teks jawaban SiagaBot
   lib/                  logika murni (tanpa React), semuanya dites
     patterns.js         helper regex kata() dan pola()
     analyzer.js         mesin pengecekan
     practice.js         aturan skor, level, lencana, log chat
     emergency.js        rencana aksi & pesan peringatan
     checklist.js        persentase & "langkah berikutnya"
+    chatbot.js          otak SiagaBot: kenali niat, susun jawaban
     storage.js          baca/tulis localStorage yang aman + validasi bentuk data
     clipboard.js        salin & bagikan
   hooks/                usePersistedState, useHashRoute, usePageFocus
   components/           Card, Button, Pill, Badge, Notice, ProgressBar, Toast,
                         Eyebrow, Heading, ChoiceButton
+    ChatBot/            ChatBot (tombol + state), BotPanel, BotMessage
 ```
+
+## SiagaBot
+
+SiagaBot adalah bot tanya-jawab sederhana, **bukan AI**. Ia tidak memanggil server mana pun:
+pesan dicocokkan dengan kata kunci di `src/data/chatbot.js` (memakai helper `kata()` yang sama
+dengan mesin pengecekan), lalu dijawab dari data yang sudah ada. Riwayat chat hanya ada di memori
+dan hilang saat halaman ditutup.
+
+Urutan keputusan bot (`respond()` di `src/lib/chatbot.js`):
+1. Pesan berawalan `cek:` → isi pesannya dicek dengan analyzer.
+2. Cerita "sudah kena" (udah transfer, udah kasih OTP, akun dibajak, data bocor, kepencet link)
+   → langkah "Sekarang juga" dari `emergency.js` + tombol ke Bantuan dengan kejadian terpilih.
+3. Bot sedang menunggu pesan (setelah "Cek pesan") → pesan dicek.
+4. Pesan panjang (≥ 120 karakter) atau berisi tautan → dianggap pesan tempelan dan dicek.
+5. Niat lain: "kena tipu" tanpa detail (bot bertanya kejadiannya), ciri-ciri modus (dari
+   `scenarios.js` + tombol latihan), lapor, minta cek, bantuan, terima kasih, sapaan.
+6. Analyzer menemukan pola penipuan → hasil cek.
+7. Selain itu → bot bilang belum paham dan menawarkan tombol pertanyaan cepat.
+
+Frasa kejadian darurat sengaja berbentuk "sudah terjadi" (`udah kasih kode`, bukan `kasih kode`)
+supaya pesan penipu yang ditempel ("kasih kode OTP-nya ya kak") tidak dikira pengakuan korban.
+Untuk menambah kata kunci, tambahkan frasa ke `kata(...)` yang sesuai di `src/data/chatbot.js`
+lalu jalankan `npm test` (`src/lib/chatbot.test.js`).
 
 ## Cara menambah konten
 
@@ -163,6 +191,10 @@ nilai default tanpa crash (dites di `src/lib/storage.test.js`). Teks yang ditemp
 - **Favicon** berupa SVG inline (data URI), supaya tidak ada request 404 atau request jaringan tambahan.
 - **Bagikan tips** memakai `navigator.share`. Kalau tidak tersedia, teks disalin dan muncul toast
   "Tersalin". Kalau menyalin juga gagal, muncul toast "Gagal menyalin. Coba salin manual ya".
+- **SiagaBot dibuat offline (tanpa AI)** supaya janji privasi tetap utuh: tidak ada teks yang keluar
+  dari browser. Panelnya layar penuh di HP dan kotak mengambang 400px mulai lebar 640px, bisa ditutup
+  dengan Escape, dan tidak menyimpan riwayat. Padding bawah halaman ditambah supaya tombol bot tidak
+  menutupi tombol di dasar kartu.
 - **Script `npm test`** menyebut glob file test secara eksplisit
   (`src/lib/*.test.js src/pages/Latihan/*.test.js`) supaya jalan sama di Windows cmd dan Linux.
 

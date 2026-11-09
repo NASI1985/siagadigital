@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { ToastProvider } from './components/Toast.jsx';
+import ChatBot from './components/ChatBot/ChatBot.jsx';
 import { useHashRoute, navigateTo, NAV_ITEMS } from './hooks/useHashRoute.js';
 import { usePageFocus } from './hooks/usePageFocus.js';
 import Beranda from './pages/Beranda.jsx';
@@ -77,9 +78,11 @@ export default function App() {
         Lewati ke konten
       </a>
       <Header route={route} />
-      <main id="konten" tabIndex={-1} className="mx-auto w-full max-w-[1280px] px-4 pb-16 pt-6 outline-none sm:px-6 lg:px-12 lg:pt-12">
+      {/* pb-28 supaya tombol SiagaBot tidak menutupi tombol di dasar halaman. */}
+      <main id="konten" tabIndex={-1} className="mx-auto w-full max-w-[1280px] px-4 pb-28 pt-6 outline-none sm:px-6 lg:px-12 lg:pt-12">
         {page}
       </main>
+      <ChatBot onOpenEmergency={openEmergency} />
     </ToastProvider>
   );
 }

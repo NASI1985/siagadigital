@@ -18,6 +18,10 @@ const SECTIONS = [
     title: 'Cara kerja pengecekan',
     body: 'Mesin pengecekan bukan AI. Ia mencocokkan kata dan pola yang sering dipakai penipu, misalnya permintaan biaya di muka, kode OTP, atau tekanan waktu, lalu memberi bobot pada setiap temuan.',
   },
+  {
+    title: 'Tentang SiagaBot',
+    body: 'SiagaBot di pojok kanan bawah adalah asisten tanya-jawab sederhana, juga bukan AI. Ia mengenali kata kunci lalu menjawab dari panduan yang sudah disiapkan. Percakapannya diproses di browsermu, tidak dikirim ke mana pun, dan hilang saat halaman ditutup.',
+  },
 ];
 
 export default function Tentang() {
