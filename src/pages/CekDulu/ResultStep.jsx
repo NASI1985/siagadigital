@@ -1,4 +1,4 @@
-import { TriangleAlert } from 'lucide-react';
+import { Info, TriangleAlert } from 'lucide-react';
 import { describeFinding, LEVEL_LOW } from '../../lib/analyzer.js';
 import Card from '../../components/Card.jsx';
 import Eyebrow from '../../components/Eyebrow.jsx';
@@ -65,9 +65,16 @@ export default function ResultStep({ category, text, result, onRecheck, onReport
           {isLow ? null : <Badge>{result.findings.length} tanda bahaya</Badge>}
         </div>
 
+        {result.warningContext ? (
+          <Notice tone="brand" icon={Info} className="mt-4 text-[15px]">
+            Teks ini tampak seperti peringatan/edukasi, jadi permintaan kode atau data di dalamnya tidak dihitung. Tetap
+            waspada kalau pengirimnya meminta sesuatu darimu.
+          </Notice>
+        ) : null}
+
         {isLow ? (
           <p className="mt-4 leading-relaxed">
-            Tidak ada pola umum penipuan yang terdeteksi, tapi ini bukan bukti aman. Tetap verifikasi lewat kanal resmi.
+            Tidak ada pola penipuan umum yang terdeteksi. Itu belum berarti aman: tetap cek lewat kanal resmi.
           </p>
         ) : (
           <>

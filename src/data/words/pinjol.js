@@ -1,0 +1,40 @@
+// Kategori 8: pinjaman online ilegal (cair tanpa jaminan, akses kontak, data disebar).
+
+export default {
+  id: 'pinjol',
+  weight: 2,
+  title: 'Tawaran pinjol mencurigakan',
+  why: 'Pinjol ilegal menawarkan lewat chat, meminta akses kontak, lalu meneror dan menyebar data. Cek daftar pinjol resmi di OJK 157.',
+  words: [
+    'pinjol', 'pinjaman online', 'pinjaman cepat', 'dana cepat', 'dana cepat cair', 'cair cepat', 'langsung cair',
+    'cair tanpa jaminan', 'pinjaman tanpa jaminan', 'tanpa jaminan', 'tanpa agunan', 'tanpa bi checking',
+    'tanpa slik', 'tanpa slik ojk', 'tanpa cek slik', 'bi checking aman', 'tanpa survei', 'tanpa survey',
+    'bunga harian', 'bunga 0%', 'bunga nol persen', 'bunga ringan tanpa syarat', 'tenor pendek', 'limit besar',
+    'limit tinggi', 'pencairan cepat', 'cair 5 menit', 'cair dalam 5 menit', 'cair dalam hitungan menit',
+    'cair hari ini', 'pinjaman darurat', 'modal ktp', 'cukup ktp', 'hanya ktp', 'modal ktp saja', 'cukup foto ktp',
+    'akses kontak', 'akses galeri', 'izin kontak', 'izin akses kontak', 'izinkan akses kontak', 'izinkan akses galeri',
+    'penagih', 'debt collector', 'teror penagihan', 'data disebar', 'kontak disebar', 'disebar ke kontak',
+    'sebar data peminjam', 'gagal cair', 'pencairan gagal', 'dana tertahan', 'dana dibekukan', 'aplikasi pinjaman',
+    'pinjaman tanpa ribet', 'galbay', 'gagal bayar', 'pinjaman ilegal', 'pinjol ilegal', 'joki pinjol',
+    'pinjaman langsung acc', 'langsung acc', 'acc tanpa ribet', 'limit langsung cair', 'pinjaman via whatsapp',
+    'pinjaman lewat whatsapp', 'tawaran pinjaman', 'penawaran pinjaman', 'plafon pinjaman', 'kredit tanpa agunan',
+    'gadai online', 'gadai akun', 'pinjam uang online', 'pinjaman tanpa bunga', 'pinjaman bunga rendah',
+    'pinjaman pasti cair', 'dijamin cair', 'pasti cair', 'pinjaman 100% cair', 'pinjaman dana tunai cepat',
+    'uang tunai cepat', 'cairkan pinjaman', 'nomor pencairan', 'kode pencairan', 'verifikasi pencairan',
+    'pinjaman disetujui', 'pengajuan disetujui', 'pinjamanmu disetujui', 'limit kredit disetujui',
+    'aplikasi pinjaman cepat', 'aplikasi dana cepat', 'denda harian', 'denda keterlambatan harian', 'utang disebar',
+    'foto disebar', 'diteror penagih', 'dihubungi penagih', 'kontak darurat ditagih', 'pinjaman tanpa verifikasi',
+    'pinjam dana cepat', 'tanpa ditolak', 'pasti disetujui',
+  ],
+  exact: [
+    'minjem duit', 'pinjem duit', 'pinjem dana', 'kta', 'dc lapangan', 'pinjol legal 100%',
+    'slik ojk', 'bi checking', 'pinjol resmi 100%', 'apk pinjol', 'apk pinjaman', 'acc cepat', 'langsung acc 100%',
+    'lgsg cair', 'lsg cair', 'lgsung cair', 'cair cpt', 'pnjol', 'pinjol cepet', 'dana cpt', 'limit gede',
+  ],
+  ambiguous: [
+    'pinjaman', 'pinjam', 'utang', 'hutang', 'cicilan', 'tenor', 'limit', 'denda keterlambatan', 'tagihan', 'paylater',
+    'kredit', 'pengajuan', 'pencairan', 'cair', 'disetujui', 'dana tunai', 'minjem', 'pinjem', 'dc', 'tanpa verifikasi',
+  ],
+  near: [{ a: ['sebar', 'sebarkan', 'sebarin', 'kirim ke'], b: ['kontak', 'data', 'keluarga', 'teman', 'kantor'], within: 3, weak: true }],
+  patterns: [],
+};

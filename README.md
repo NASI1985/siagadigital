@@ -25,7 +25,10 @@ Buka alamat yang muncul di terminal (biasanya `http://localhost:5173`).
 | Perintah | Fungsi |
 |---|---|
 | `npm run dev` | Server pengembangan dengan hot reload |
-| `npm test` | Menjalankan semua test (`node --test`, tanpa library tambahan) |
+| `npm test` | Menjalankan semua test (`node --test`, tanpa library tambahan) lalu `npm run eval` |
+| `npm run audit:words` | Memeriksa daftar kata deteksi (duplikat, huruf besar, bentrok frasa aman, jumlah minimum) |
+| `npm run explain -- "teks"` | Menunjukkan kata/pola mana yang cocok di sebuah teks dan kenapa |
+| `npm run eval` | Mengukur deteksi pada korpus `tests/corpus/` (recall per kategori, salah tuduh) |
 | `npm run build` | Build produksi ke folder `dist/` |
 | `npm run preview` | Menjalankan hasil build secara lokal |
 
@@ -44,7 +47,9 @@ src/
                         FinalResult, practiceReducer (+ test)
     Bantuan/            index, IncidentWizard, ActionPlan, WarningMessage, ReadinessChecklist
   data/                 KONTEN murni, tanpa React
-    detectionRules.js   aturan deteksi + combo
+    detectionRules.js   menggabungkan daftar kata + combo
+    words/              daftar kata deteksi: satu file per kategori (19 kategori),
+                        groups.js (kelompok kata), safe.js (frasa aman), shared.js, index.js
     checkInput.js       kategori Cek Dulu, placeholder, contoh fiktif
     scenarios.js        6 skenario latihan
     emergency.js        kejadian, platform, kanal lapor, template pesan peringatan
@@ -52,7 +57,9 @@ src/
     chatbot.js          kata kunci & teks jawaban SiagaBot
   lib/                  logika murni (tanpa React), semuanya dites
     patterns.js         helper regex kata() dan pola()
-    analyzer.js         mesin pengecekan
+    analyzer.js         mesin pengecekan (analyze, levelFor, explain)
+    affix.js            pengenal imbuhan: mem-/di-/ter-/-kan/-in/nge-, dst.
+    normalize.js        perapian teks: huruf samaran, angka-huruf, spasi sisipan
     practice.js         aturan skor, level, lencana, log chat
     emergency.js        rencana aksi & pesan peringatan
     checklist.js        persentase & "langkah berikutnya"
@@ -106,15 +113,69 @@ Untuk menambah kata kunci atau pertanyaan wawancara, ubah `src/data/chatbot.js` 
 ## Cara menambah konten
 
 ### Kata deteksi baru
-Buka `src/data/detectionRules.js`, cari aturan yang cocok, lalu:
-- untuk **frasa biasa**, tambahkan ke `kata(...)`, misalnya `kata('segera', 'buruan', 'detik terakhir')`.
-  Spasi otomatis cocok dengan satu atau lebih spasi, huruf besar-kecil diabaikan, dan batas kata dijaga.
-- untuk **pola**, tambahkan potongan regex ke `pola(...)` dengan `String.raw`. Pakai grup
-  non-capturing `(?:...)` dan **jangan pakai lookbehind** (`(?<=`, `(?<!`) supaya tetap jalan di Safari lama.
+Semua kata ada di `src/data/words/`, satu file per kategori (misalnya `pinjol.js`, `kode-rahasia.js`).
+Tulis semua entri dengan **huruf kecil**. Tiap file punya beberapa daftar:
 
-Aturan baru cukup ditambahkan sebagai objek `{ id, weight, title, why, patterns }`.
-Bobot 3 = kuat (sorot merah), 2 = mencurigakan, 1 = lemah (sorot kuning). Di teks `why`, `{match}`
-akan diganti dengan frasa pertama yang ditemukan. Setelah itu jalankan `npm test`.
+| Daftar | Kapan dipakai | Contoh |
+|---|---|---|
+| `words` | Kata/frasa **bentuk dasar**. Imbuhan dikenali otomatis. | `'transfer dulu'` juga cocok dengan "ditransferin dulu" |
+| `exact` | Singkatan, salah ketik, bahasa Inggris: dicocokkan **apa adanya** tanpa imbuhan. | `'tf dulu'`, `'admin fee'` |
+| `ambiguous` | Kata yang sering muncul di pesan biasa. Baru dihitung kalau di kalimat yang sama ada kata kuat dari aturan ini atau kata "jangkar" (`anchors`). | `'pajak'`, `'ongkir'` |
+| `near` | Dua kelompok kata dari `groups.js` yang berdekatan (`within` = jarak kata). | `{ a: 'VERB_PAY', b: 'FEE_NOUNS', within: 4 }` |
+| `patterns` | Regex lewat `pola(...)` untuk hal yang butuh angka/URL. | `biaya pendaftaran Rp150.000` |
+
+Contoh menambah kata ke kategori pinjol:
+
+```js
+// src/data/words/pinjol.js
+words: [ ..., 'cair tanpa survei' ],   // cocok juga: "dicairkan tanpa survei"
+exact: [ ..., 'pinjol tnp bi checking' ],
+ambiguous: [ ..., 'limit' ],            // butuh kata pinjol lain di kalimat yang sama
+```
+
+Aturan menulis:
+- Kata di `words` minimal 4 huruf (kata pendek masuk `exact`).
+- Jangan menulis bentuk berimbuhan di `exact` kalau bentuk dasarnya sudah ada di `words`.
+- Kalau sebuah frasa biasa ikut tertuduh (misalnya "bayar listrik"), tambahkan ke `src/data/words/safe.js`.
+  Kecocokan yang bertumpuk dengan frasa aman dibuang.
+- Regex di `pola(...)` ditulis dengan `String.raw`, pakai grup `(?:...)`, dan **jangan pakai lookbehind**
+  (`(?<=`, `(?<!`) supaya tetap jalan di Safari lama.
+
+Bobot: 3 = kuat (sorot merah), 2 = mencurigakan, 1 = lemah (sorot kuning). Di teks `why`, `{match}`
+diganti dengan frasa pertama yang ditemukan. Setelah mengubah kata, jalankan `npm run audit:words` lalu `npm test`.
+
+### Cara kerja imbuhan dan perapian teks
+- **Imbuhan** (`src/lib/affix.js`): setiap kata di pesan dipotong akhirannya (-kan, -an, -i, -in, -nya,
+  -lah, -kah, -pun, -ku, -mu) dan awalannya (me-, di-, ter-, ber-, pe-, ke-, se-, nge-, dst.), termasuk
+  peluluhan (mentransfer → transfer, menyetor → setor, ngirim → kirim). Hasil potongan dicocokkan dengan
+  bentuk dasar di `words`. Sisa potongan minimal 4 huruf supaya kata sehari-hari tidak ikut tertuduh.
+- **Perapian** (`src/lib/normalize.js`): sebelum dicocokkan, teks dirapikan: huruf mirip dari abjad lain
+  (Kiril/Yunani) diganti huruf biasa, tanda aksen dibuang, karakter tak terlihat dihapus, angka pengganti
+  huruf di tengah kata dibaca sebagai huruf (`tr4nsf3r` → transfer), huruf berspasi disatukan
+  (`t r a n s f e r`), dan huruf berulang dipendekkan (`transferrrr`). Nominal seperti `Rp150.000` tidak
+  diubah. Posisi sorotan tetap mengacu ke teks asli.
+- **Konteks peringatan**: kalimat seperti "jangan pernah bagikan kode OTP" atau "bank tidak akan meminta
+  PIN" tidak dihitung sebagai permintaan kode/data, dan hasil menampilkan catatan bahwa teks tampak seperti
+  peringatan.
+
+### Merawat deteksi (kalau ada penipuan yang lolos)
+1. Tambahkan contoh pesannya (disamarkan, fiktif) ke `tests/corpus/scam.jsonl`:
+   `{"text":"...","category":"pinjol","minLevel":"sedang"}`.
+2. Jalankan `npm run explain -- "isi pesan"` untuk melihat apa yang sudah/belum cocok.
+3. Tambahkan kata yang kurang ke file kategori di `src/data/words/`.
+4. Jalankan `npm run audit:words`, `npm run eval`, lalu `npm test`.
+5. Kalau ada pesan normal yang ikut tertuduh, tambahkan ke `tests/corpus/benign.jsonl` dan perbaiki
+   (pindahkan kata ke `ambiguous` atau tambahkan frasa aman).
+
+Aplikasi **tidak mengirim data apa pun**: semua pengecekan berjalan di browser, jadi korpus hanya diisi
+manual oleh pengembang.
+
+### Batasan
+- Ini **pencocokan pola, bukan AI**. Penipuan dengan kata-kata baru bisa lolos sampai daftarnya diperbarui.
+- Tidak membaca gambar, suara, atau isi tautan; hanya teks yang ditempel (maksimal 8.000 karakter).
+- Hasil **"Rendah" bukan bukti aman**. Tetap cek lewat kanal resmi.
+- Korpus evaluasi ditulis sendiri oleh pengembang, jadi angka recall cenderung optimistis. Contoh berbahasa
+  daerah perlu ditinjau penutur asli.
 
 ### Skenario latihan baru
 Tambahkan objek ke `SCENARIOS` di `src/data/scenarios.js`:

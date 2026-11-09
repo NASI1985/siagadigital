@@ -1,0 +1,42 @@
+// Kategori 16: kerja luar negeri ilegal dan calo (CPNS/BUMN jalur dalam, visa, beasiswa palsu).
+
+export default {
+  id: 'luar-negeri',
+  weight: 1,
+  title: 'Kerja luar negeri / calo',
+  why: 'Tawaran kerja luar negeri lewat chat dan janji lolos CPNS/BUMN lewat “orang dalam” sering berujung penipuan atau perdagangan orang.',
+  words: [
+    'kerja di luar negeri', 'kerja di amerika', 'kerja di jepang', 'kerja di dubai', 'kerja di taiwan', 'kerja di korea',
+    'kerja di arab', 'kerja di malaysia', 'kerja di kamboja', 'kerja di myanmar', 'kerja di thailand', 'kerja di eropa',
+    'kerja di australia', 'kerja di hongkong', 'kerja di singapura', 'kerja di kanada', 'kerja di jerman',
+    'kerja di turki', 'kerja di polandia', 'kerja di brunei', 'kerja di laos', 'kerja di filipina', 'lowongan luar negeri',
+    'loker luar negeri', 'tki ilegal', 'jalur non prosedural', 'berangkat tanpa dokumen', 'visa turis untuk kerja',
+    'pakai visa turis', 'visa kerja cepat', 'sponsor visa', 'sponsor kerja', 'biaya visa', 'biaya keberangkatan',
+    'biaya pemberangkatan', 'biaya medical', 'biaya medical check up', 'calo cpns', 'calo bumn', 'calo polri', 'calo tni',
+    'calo pns', 'calo pppk', 'cpns jalur dalam', 'jalur dalam', 'jalur belakang', 'lewat orang dalam',
+    'punya orang dalam', 'titip nama', 'titip anak', 'dijamin lolos', 'pasti lolos', 'dijamin lulus', 'pasti lulus',
+    'lulus tanpa tes', 'masuk tanpa tes', 'bayar untuk lolos', 'uang sogok', 'sogok', 'sogokan', 'beasiswa palsu',
+    'beasiswa penuh tanpa tes', 'beasiswa luar negeri gratis', 'kuliah gratis di luar negeri', 'biaya pengurusan beasiswa',
+    'pengurusan visa', 'pengurusan paspor kilat', 'paspor kilat', 'agen penyalur', 'penyalur tenaga kerja',
+    'penyalur tki', 'magang jepang tanpa tes', 'kerja kapal pesiar', 'abk kapal asing', 'abk luar negeri',
+    'pmi ilegal', 'perusahaan di kamboja', 'perusahaan di myanmar', 'gaji dolar', 'gaji dalam dolar', 'gaji yen',
+    'gaji ringgit', 'gaji riyal', 'gaji won', 'tiket pesawat ditanggung', 'akomodasi ditanggung', 'mess gratis',
+    'calo', 'makan ditanggung', 'penempatan langsung', 'penempatan cepat', 'berangkat cepat', 'proses cepat berangkat',
+    'tanpa kursus bahasa', 'tanpa bisa bahasa', 'tanpa keahlian', 'kerja jadi customer service luar negeri',
+    'operator online luar negeri', 'admin online di kamboja', 'kerja di perbatasan thailand', 'lolos cpns',
+    'kursi cpns', 'kuota khusus cpns', 'formasi khusus', 'sk pengangkatan', 'pegawai tetap tanpa tes',
+    'masuk bumn tanpa tes', 'masuk polisi tanpa tes', 'masuk akpol', 'masuk tni lewat jalur', 'masuk kedinasan',
+  ],
+  exact: [
+    'kerja ln', 'loker ln', 'job ln', 'lowker ln', 'pns jalur dalam', 'sk palsu',
+    'cpns bayar', 'bumn bayar', 'kerja luar', 'kerja ke luar', 'visa kerja turis', 'job overseas', 'overseas job',
+    'work abroad', 'sponsor visa kerja',
+  ],
+  ambiguous: [
+    'luar negeri', 'mancanegara', 'visa', 'beasiswa', 'cpns', 'pns', 'bumn', 'pppk', 'kedinasan', 'tki', 'tkw', 'ln',
+    'sponsor', 'agen', 'penyalur', 'keberangkatan', 'berangkat', 'kapal pesiar', 'abk', 'formasi',
+  ],
+  anchors: ['JOB_NOUNS', 'MONEY_NOUNS'],
+  near: [{ a: 'JOB_NOUNS', b: 'COUNTRIES', within: 4 }],
+  patterns: [],
+};

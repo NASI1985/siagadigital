@@ -1,0 +1,48 @@
+// Kategori 15: asmara, darurat, dan mengaku kerabat (nomor baru, kecelakaan, paket hadiah luar negeri).
+// Banyak kata di sini umum dalam obrolan keluarga, jadi masuk "ambiguous" dan butuh jangkar uang/darurat.
+
+export default {
+  id: 'darurat-kerabat',
+  weight: 2,
+  title: 'Mengaku kerabat / darurat',
+  why: 'Penipu mengaku keluarga, teman, atau kekasih dengan nomor baru lalu meminta uang mendesak. Telepon nomor lama orangnya dulu.',
+  words: [
+    'ini nomor baruku', 'ini nomor baru aku', 'ini nomor baru saya', 'nomor lama hilang', 'nomor lamaku hilang',
+    'hp hilang pakai nomor ini', 'pinjam hp teman', 'pakai hp teman', 'simpan nomor baruku', 'save nomor baru aku',
+    'tolong isikan pulsa', 'tolong isiin pulsa', 'tolong beliin pulsa', 'minta tolong isikan pulsa',
+    'minta pulsa dulu', 'pinjam uang dulu nanti diganti', 'pinjam dulu nanti aku ganti', 'nanti aku ganti besok',
+    'transfer darurat', 'butuh uang darurat', 'uang darurat', 'butuh dana darurat', 'biaya rumah sakit',
+    'biaya operasi', 'uang jaminan rumah sakit', 'deposit rumah sakit', 'uang damai', 'uang tebusan polisi',
+    'jaminan penangguhan', 'ma ini aku', 'pa ini aku', 'mah ini aku', 'pah ini aku', 'bu ini aku', 'pak ini aku',
+    'kak ini aku', 'tante ini aku', 'om ini aku', 'ini aku anakmu', 'ini anakmu', 'ini aku adikmu', 'ini aku kakakmu',
+    'masih simpan nomorku', 'biaya tiket pulang', 'tertahan di bandara', 'tertahan di imigrasi',
+    'paket hadiah dari luar negeri', 'kiriman dari luar negeri', 'kirim paket hadiah untukmu',
+    'paket hadiah tertahan', 'paket tertahan di bea cukai', 'tertahan bea cukai', 'biaya bea masuk paket',
+    'aku kirim hadiah untukmu', 'aku sudah mengirim paket', 'paket berisi uang', 'koper berisi uang',
+    'koper berisi dolar', 'uang dolar dalam paket', 'kurir diplomatik', 'kurir diplomat', 'tentara amerika',
+    'tentara pbb', 'dokter di luar negeri', 'insinyur di kapal', 'kontraktor minyak', 'janda kaya', 'duda kaya',
+    'warisan untukmu', 'kenalan dari aplikasi kencan', 'pacar online minta uang', 'kirim uang untuk tiket bertemu',
+    'biaya visa untuk bertemu', 'kamera rusak tidak bisa video call', 'investasi bersama pasangan',
+  ],
+  exact: [
+    'no baru', 'nmr baru', 'nomer baru', 'no baruku', 'nomer baruku', 'nmr baruku', 'ganti no', 'ganti nmr',
+    'ganti nomer', 'save no ini', 'sv nmr ini', 'mam ini aku', 'mi ini aku', 'bun ini aku',
+    'yah ini aku', 'ini aq', 'aq anakmu', 'pinjem dlu', 'pinjem dl', 'pnjm dulu', 'tf dlu', 'beliin pulsa',
+    'isiin pulsa', 'isikan pulsa', 'butuh duit skrg', 'kirim duit skrg',
+  ],
+  ambiguous: [
+    'nomor baru', 'ganti nomor', 'hp hilang', 'hp rusak', 'hp mati', 'simpan nomor ini', 'save nomor ini',
+    'minta pulsa', 'pinjam dulu', 'pinjem dulu', 'darurat', 'kecelakaan', 'rumah sakit', 'operasi', 'tiket pesawat',
+    'beli tiket', 'biaya tiket', 'tiket pulang', 'bandara', 'paket dari luar negeri', 'sayang', 'beb', 'bebeb',
+    'sayangku', 'cinta', 'tentara', 'pelaut', 'warisan', 'pacar online', 'kenalan online', 'nanti diganti',
+    'nanti aku ganti', 'butuh uang', 'butuh dana', 'tolong aku', 'tolong bantu', 'tebak siapa', 'masih ingat aku',
+    'aku ingin menikahimu', 'aku akan datang menemuimu', 'kita akan menikah', 'masa depan kita',
+    'percaya padaku sayang', 'hp ku rusak', 'darurat banget', 'urgent banget tolong', 'honey', 'my love', 'dear',
+    'mengalami kecelakaan', 'kecelakaan di jalan', 'tabrakan di jalan', 'masuk rumah sakit', 'dirawat di rumah sakit',
+    'operasi darurat', 'ditahan polisi', 'ditangkap polisi', 'di kantor polisi sekarang', 'hp mama rusak',
+    'hp papa rusak', 'video call tidak bisa', 'ongkos pulang', 'terdampar di',
+  ],
+  anchors: ['MONEY_NOUNS', 'EMERGENCY_NOUNS', 'BANKS', 'EWALLETS', 'VERB_PAY'],
+  near: [{ a: 'EMERGENCY_NOUNS', b: 'MONEY_NOUNS', within: 6 }],
+  patterns: [],
+};

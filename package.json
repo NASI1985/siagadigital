@@ -11,7 +11,10 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test src/lib/*.test.js src/pages/Latihan/*.test.js"
+    "test": "node --test src/lib/*.test.js src/pages/Latihan/*.test.js && node scripts/eval.js",
+    "audit:words": "node scripts/audit-words.js",
+    "explain": "node scripts/explain.js",
+    "eval": "node scripts/eval.js"
   },
   "dependencies": {
     "lucide-react": "^0.468.0",

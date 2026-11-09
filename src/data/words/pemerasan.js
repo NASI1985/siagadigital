@@ -1,0 +1,35 @@
+// Kategori 17: pemerasan (ancam sebar foto/video/data, "bayar atau kusebar").
+
+export default {
+  id: 'pemerasan',
+  weight: 3,
+  title: 'Ancaman / pemerasan',
+  why: 'Pemeras jarang berhenti setelah dibayar. Jangan transfer, simpan bukti, dan lapor ke polisi atau layanan pengaduan.',
+  words: [
+    'bayar atau kusebar', 'bayar atau saya sebar', 'bayar atau aku sebar', 'bayar atau gue sebar',
+    'bayar atau kami sebar', 'transfer atau saya sebar', 'transfer atau kusebar', 'transfer atau aku sebar',
+    'kalau tidak bayar saya sebar', 'kalau gak bayar aku sebar', 'kalau tidak transfer saya sebar',
+    'jika tidak membayar kami sebarkan', 'foto kamu akan disebar', 'video kamu akan disebar', 'fotomu akan kusebar',
+    'videomu akan kusebar', 'akan saya sebar', 'akan kusebarkan', 'akan kami sebarkan', 'aku sebar fotomu',
+    'aku sebar videomu', 'sebar foto bugil', 'sebar video bugil', 'sebar video syur', 'sebar foto syur',
+    'sebar ke keluarga', 'sebar ke semua kontak', 'sebar ke teman kantor', 'sebar ke grup keluarga',
+    'kirim ke semua kontakmu', 'kirim ke keluargamu', 'kirim ke istrimu', 'kirim ke suamimu', 'kirim ke orang tuamu',
+    'kirim ke pacarmu', 'kirim ke atasanmu', 'video call sex', 'rekaman vcs', 'rekaman video call', 'foto bugil',
+    'video bugil', 'foto telanjang', 'video telanjang', 'foto syur', 'video syur', 'konten intim', 'uang tutup mulut',
+    'sextortion', 'kami punya rekaman', 'aku punya rekamanmu', 'kami punya videomu', 'kamera kamu sudah kami retas',
+    'perangkatmu sudah diretas', 'hp kamu sudah diretas', 'sudah kami retas', 'data kamu sudah kami sadap',
+    'kami punya data kamu', 'aibmu akan tersebar', 'sebar aibmu', 'viralkan kamu', 'aku viralkan', 'kami viralkan',
+    'kubuat viral', 'hancurkan reputasimu', 'karirmu hancur', 'nama baikmu hancur', 'bayar dalam 24 jam atau',
+    'atau kusebar', 'atau saya sebarkan', 'atau aku viralkan', 'kalau mau aman bayar', 'bayar supaya tidak disebar',
+    'bayar biar tidak disebar', 'biar gak kusebar', 'tebusan foto', 'tebusan video',
+  ],
+  exact: ['vcs', 'vcs bugil', 'pap bugil', 'pap tt', 'bokep kamu', 'bayar ato kusebar', 'tf ato kusebar', 'kusebar'],
+  ambiguous: [
+    'ancam', 'mengancam', 'diancam', 'peras', 'memeras', 'pemerasan', 'retas', 'hack', 'hacker', 'sebar foto',
+    'sebar video', 'sebarkan foto', 'sebarkan video', 'sebar data', 'viralkan', 'aib', 'foto pribadi', 'video pribadi',
+    'rekaman', 'sebar',
+  ],
+  anchors: ['MONEY_NOUNS', 'VERB_PAY'],
+  near: [{ a: 'THREATS', b: 'EXPOSE_NOUNS', within: 4, weak: true }],
+  patterns: [],
+};

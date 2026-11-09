@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { analyze } from '../../lib/analyzer.js';
+import { analyze, MAX_INPUT_LENGTH } from '../../lib/analyzer.js';
 import { DEFAULT_CATEGORY_ID, findCategory } from '../../data/checkInput.js';
 import { TRANSFER_INCIDENT_ID } from '../../data/emergency.js';
 import { useToast } from '../../components/Toast.jsx';
@@ -17,6 +17,16 @@ export default function CekDulu({ onOpenEmergency }) {
   usePageFocus(step);
 
   const category = findCategory(categoryId);
+
+  // Batasi 8.000 karakter supaya pengecekan tetap cepat di HP.
+  const handleTextChange = (value) => {
+    if (value.length > MAX_INPUT_LENGTH) {
+      setText(value.slice(0, MAX_INPUT_LENGTH));
+      showToast('Teks terlalu panjang, dipotong');
+      return;
+    }
+    setText(value);
+  };
 
   const handleSubmit = () => {
     if (text.trim() === '') {
@@ -44,7 +54,7 @@ export default function CekDulu({ onOpenEmergency }) {
       category={category}
       onCategoryChange={setCategoryId}
       text={text}
-      onTextChange={setText}
+      onTextChange={handleTextChange}
       onUseExample={() => setText(category.example)}
       onSubmit={handleSubmit}
     />
