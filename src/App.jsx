@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ToastProvider } from './components/Toast.jsx';
 import { useHashRoute, navigateTo, NAV_ITEMS } from './hooks/useHashRoute.js';
 import { usePageFocus } from './hooks/usePageFocus.js';
@@ -46,6 +46,11 @@ export default function App() {
   // Niat dari halaman lain, misalnya "Aku sudah transfer" -> Bantuan dengan kejadian terpilih.
   const [emergencyIntent, setEmergencyIntent] = useState(null);
   usePageFocus(route);
+
+  // Niat hanya berlaku sekali: buang saat pengguna meninggalkan Bantuan.
+  useEffect(() => {
+    if (route !== 'bantuan') setEmergencyIntent(null);
+  }, [route]);
 
   const openEmergency = (incidentId) => {
     setEmergencyIntent({ incidentId, id: Date.now() });
