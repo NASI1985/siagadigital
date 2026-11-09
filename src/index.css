@@ -79,6 +79,13 @@
   }
 }
 
+@layer components {
+  /* Halaman fitur: 2 kolom sama tinggi, menumpuk di bawah 820px. */
+  .feature-grid {
+    @apply grid gap-8 two:min-h-[640px] two:grid-cols-2;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,

@@ -8,7 +8,7 @@ export default function ChoiceButton({ selected, onClick, disabled = false, chil
       disabled={disabled}
       className={`flex min-h-[48px] w-full items-center rounded-xl border-2 px-4 py-2.5 text-left text-[15px] font-semibold transition ${
         selected ? 'border-brand-ink bg-brand-tint' : 'border-line bg-surface hover:border-muted'
-      } ${disabled && !selected ? 'cursor-default opacity-70 hover:border-line' : ''}`}
+      } ${disabled && !selected ? 'cursor-default hover:border-line' : ''}`}
     >
       {children}
     </button>

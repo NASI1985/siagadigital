@@ -18,7 +18,7 @@ export default function ReadinessChecklist() {
   const nextItem = uncheckedItems(SECURITY_CHECKLIST, checked)[0];
 
   return (
-    <div className="grid gap-8 two:grid-cols-2">
+    <div className="feature-grid">
       <Card>
         <Eyebrow tone="danger">Bertindak · Checklist keamanan akun</Eyebrow>
         <Heading className="mt-3">Cek perlindunganmu</Heading>

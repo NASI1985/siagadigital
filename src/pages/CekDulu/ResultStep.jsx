@@ -44,7 +44,7 @@ export default function ResultStep({ category, text, result, onRecheck, onReport
   const isLow = result.level === LEVEL_LOW;
 
   return (
-    <div className="grid gap-8 two:grid-cols-2">
+    <div className="feature-grid">
       <div className="flex flex-col">
         <Eyebrow>Cek Dulu · {category.shortLabel}</Eyebrow>
         <Heading as="h1" main className="mt-3">

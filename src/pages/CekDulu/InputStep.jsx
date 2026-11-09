@@ -10,7 +10,7 @@ const TOTAL_STEPS = 3;
 
 export default function InputStep({ category, onCategoryChange, text, onTextChange, onUseExample, onSubmit }) {
   return (
-    <div className="grid gap-8 two:grid-cols-2">
+    <div className="feature-grid">
       <Card>
         <Eyebrow>Kenali · Langkah 1 dari {TOTAL_STEPS}</Eyebrow>
         <Heading as="h1" main className="mt-3">

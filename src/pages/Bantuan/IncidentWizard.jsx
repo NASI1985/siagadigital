@@ -23,7 +23,7 @@ function ChoiceList({ items, selectedId, onSelect, label }) {
 
 export default function IncidentWizard({ incidentId, platformId, onIncidentChange, onPlatformChange, onSubmit }) {
   return (
-    <div className="grid gap-8 two:grid-cols-2">
+    <div className="feature-grid">
       <Card>
         <Eyebrow tone="danger">Bertindak · Pertanyaan 1 dari {QUESTION_COUNT}</Eyebrow>
         <Heading as="h1" main className="mt-3">

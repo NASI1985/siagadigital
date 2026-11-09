@@ -29,7 +29,7 @@ export default function FinalResult({ state, scores, onExit }) {
   };
 
   return (
-    <div className="grid gap-8 two:grid-cols-2">
+    <div className="feature-grid">
       <Card tone="brand">
         <Eyebrow tone="light">Hasil akhir · {scenario.title}</Eyebrow>
         <h1 tabIndex={-1} data-main-heading="" className="mt-4 text-hero font-extrabold">

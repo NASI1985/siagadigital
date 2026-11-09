@@ -28,7 +28,7 @@ export default function Bantuan({ intent }) {
   return (
     <div className="space-y-8">
       {plan ? (
-        <div className="grid gap-8 two:grid-cols-2">
+        <div className="feature-grid">
           <ActionPlan key={`${incidentId}-${platformId}`} plan={plan} onEditAnswers={() => setPlanVisible(false)} />
           <WarningMessage incidentId={incidentId} />
         </div>

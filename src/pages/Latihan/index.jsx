@@ -40,7 +40,7 @@ export default function Latihan() {
 
   const scenarioNumber = SCENARIOS.findIndex((item) => item.id === scenario.id) + 1;
   return (
-    <div className="grid gap-8 two:grid-cols-2">
+    <div className="feature-grid">
       <ChatPanel state={state} scenarioNumber={scenarioNumber} totalScenarios={SCENARIOS.length} />
       {endedByRisk ? (
         <RiskyFeedback
