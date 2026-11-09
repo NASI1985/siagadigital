@@ -78,7 +78,7 @@ export default function BotPanel({ messages, onSend, onAction, onClose }) {
             type="text"
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            placeholder="Ceritakan, atau ketik cek: lalu tempel pesan"
+            placeholder="Ceritain aja, misal: aku ditawarin kerja"
             autoComplete="off"
             className="min-h-[44px] min-w-0 flex-1 rounded-xl border-2 border-line bg-surface px-3 text-[16px] text-ink placeholder:text-muted focus:border-brand-ink"
           />

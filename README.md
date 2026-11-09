@@ -67,26 +67,41 @@ src/
 
 ## SiagaBot
 
-SiagaBot adalah bot tanya-jawab sederhana, **bukan AI**. Ia tidak memanggil server mana pun:
+SiagaBot adalah bot tanya-jawab offline, **bukan AI**. Ia tidak memanggil server mana pun:
 pesan dicocokkan dengan kata kunci di `src/data/chatbot.js` (memakai helper `kata()` yang sama
 dengan mesin pengecekan), lalu dijawab dari data yang sudah ada. Riwayat chat hanya ada di memori
 dan hilang saat halaman ditutup.
 
+Supaya terasa seperti ngobrol:
+- **Bahasa gaul & salah ketik** dirapikan dulu (`SLANG`, `VOCABULARY`): "gw udh tf" → "aku udah
+  transfer", "dibjak" → "dibajak". Koreksi hanya untuk kata 6+ huruf yang beda tepat satu huruf.
+  Kalau ada kata asli yang ikut "dikoreksi", tambahkan ke `REAL_WORDS`.
+- **Penyangkal** dihormati: "belum transfer", "biar akun nggak dibajak" bukan kejadian darurat.
+- **Wawancara per modus** (`INTERVIEWS`): cerita seperti "aku ditawarin kerja" membuat bot bertanya
+  tanda bahaya satu per satu (Iya / Nggak / Nggak tahu), lalu menyimpulkan tingkat bahayanya. Detail
+  yang sudah disebut di cerita langsung dihitung dan tidak ditanyakan ulang.
+- **Ingat topik terakhir**: "contohnya?", "cara menghindarinya?", "kalau udah telanjur?", "terus?"
+  dijawab sesuai modus atau kejadian yang baru dibahas.
+- **Variasi kalimat**: teks berupa daftar di `BOT_TEXT` dipakai bergantian.
+
 Urutan keputusan bot (`respond()` di `src/lib/chatbot.js`):
 1. Pesan berawalan `cek:` → isi pesannya dicek dengan analyzer.
-2. Cerita "sudah kena" (udah transfer, udah kasih OTP, akun dibajak, data bocor, kepencet link)
+2. "batal" saat wawancara atau mode cek → berhenti.
+3. Cerita "sudah kena" (udah transfer, udah kasih OTP, akun dibajak, data bocor, kepencet link)
    → langkah "Sekarang juga" dari `emergency.js` + tombol ke Bantuan dengan kejadian terpilih.
-3. Bot sedang menunggu pesan (setelah "Cek pesan") → pesan dicek.
-4. Pesan panjang (≥ 120 karakter) atau berisi tautan → dianggap pesan tempelan dan dicek.
-5. Niat lain: "kena tipu" tanpa detail (bot bertanya kejadiannya), ciri-ciri modus (dari
-   `scenarios.js` + tombol latihan), lapor, minta cek, bantuan, terima kasih, sapaan.
-6. Analyzer menemukan pola penipuan → hasil cek.
-7. Selain itu → bot bilang belum paham dan menawarkan tombol pertanyaan cepat.
+4. Sedang wawancara → pesan dibaca sebagai jawaban (kecuali jelas ganti topik).
+5. Bot sedang menunggu pesan (setelah "Cek pesan") → pesan dicek.
+6. Pesan panjang (≥ 120 karakter) atau berisi tautan → dianggap pesan tempelan dan dicek.
+7. Pertanyaan lanjutan pendek soal topik terakhir.
+8. Niat lain: modus (ciri-ciri / contoh / cara menghindari / wawancara), "kena tipu" tanpa detail,
+   perasaan panik, tips aman, lapor, minta cek, bantuan, terima kasih, sapaan.
+9. Analyzer menemukan pola penipuan → hasil cek.
+10. Selain itu → bot bilang belum paham dan menawarkan tombol (sesuai topik terakhir kalau ada).
 
 Frasa kejadian darurat sengaja berbentuk "sudah terjadi" (`udah kasih kode`, bukan `kasih kode`)
 supaya pesan penipu yang ditempel ("kasih kode OTP-nya ya kak") tidak dikira pengakuan korban.
-Untuk menambah kata kunci, tambahkan frasa ke `kata(...)` yang sesuai di `src/data/chatbot.js`
-lalu jalankan `npm test` (`src/lib/chatbot.test.js`).
+Untuk menambah kata kunci atau pertanyaan wawancara, ubah `src/data/chatbot.js` lalu jalankan
+`npm test` (`src/lib/chatbot.test.js`).
 
 ## Cara menambah konten
 

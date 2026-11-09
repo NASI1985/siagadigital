@@ -20,7 +20,7 @@ const SECTIONS = [
   },
   {
     title: 'Tentang SiagaBot',
-    body: 'SiagaBot di pojok kanan bawah adalah asisten tanya-jawab sederhana, juga bukan AI. Ia mengenali kata kunci lalu menjawab dari panduan yang sudah disiapkan. Percakapannya diproses di browsermu, tidak dikirim ke mana pun, dan hilang saat halaman ditutup.',
+    body: 'SiagaBot di pojok kanan bawah adalah asisten tanya-jawab offline, juga bukan AI. Ia mengenali kata kunci (termasuk bahasa gaul dan salah ketik), bertanya balik untuk menilai kasusmu, lalu menjawab dari panduan yang sudah disiapkan. Percakapannya diproses di browsermu, tidak dikirim ke mana pun, dan hilang saat halaman ditutup.',
   },
 ];
 

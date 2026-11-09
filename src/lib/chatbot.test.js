@@ -107,3 +107,150 @@ test('semua tombol pertanyaan cepat menghasilkan jawaban yang bukan "tidak paham
     assert.doesNotMatch(firstReply(quick.message).text, /belum paham/, quick.label);
   }
 });
+
+// ---------- Percakapan interaktif ----------
+
+import { normalize, classifyAnswer } from './chatbot.js';
+import { INTERVIEWS } from '../data/chatbot.js';
+
+// Kirim beberapa pesan berurutan, kembalikan semua balasan + konteks akhir.
+function converse(...texts) {
+  let context = INITIAL_BOT_CONTEXT;
+  const replies = [];
+  for (const text of texts) {
+    const result = respond(text, context);
+    replies.push(result.messages);
+    context = result.context;
+  }
+  return { replies, context, last: replies.at(-1).at(-1) };
+}
+
+test('bahasa gaul dan salah ketik dirapikan', () => {
+  assert.equal(normalize('gw udh tf'), 'aku udah transfer');
+  assert.equal(normalize('akunku dibjak'), 'akunku dibajak');
+  assert.equal(normalize('tolonggg aku trasnfer'), 'tolong aku transfer');
+  assert.equal(normalize('aku lapar'), 'aku lapar');
+  for (const word of ['diajak', 'terserah', 'tersebut', 'tertidur', 'rekeningku', 'installer']) {
+    assert.equal(normalize(word), word, word);
+  }
+  assert.equal(firstReply('gw udh tf 500rb ke dia').actions[0].incidentId, 'transfer');
+  assert.equal(firstReply('ig gw kebajak').actions[0].incidentId, 'akun-dibajak');
+  assert.equal(firstReply('akunku dibjak orang').actions[0].incidentId, 'akun-dibajak');
+});
+
+test('kalimat menyangkal tidak dianggap kejadian', () => {
+  assert.notEqual(detectIntent('gimana biar akun nggak dibajak?')?.kind, 'emergency');
+  assert.notEqual(detectIntent('jangan sampai akunku dibajak')?.kind, 'emergency');
+  assert.match(firstReply('gimana biar akun gak dibajak?').text, /lebih aman/);
+  // Akun teman yang dibajak = modus teman dibajak, bukan akun sendiri.
+  assert.equal(detectIntent('akun temenku dibajak terus minta pinjem duit').scenarioId, 'teman-dibajak');
+});
+
+test('jawaban iya / nggak / nggak tahu dikenali', () => {
+  assert.equal(classifyAnswer('iyaa'), 'yes');
+  assert.equal(classifyAnswer('udah'), 'yes');
+  assert.equal(classifyAnswer('gak'), 'no');
+  assert.equal(classifyAnswer('nggak ada'), 'no');
+  assert.equal(classifyAnswer('gatau'), 'unsure');
+  assert.equal(classifyAnswer('kurang tahu sih'), 'unsure');
+  assert.equal(classifyAnswer('resep nasi goreng'), null);
+});
+
+test('cerita modus -> bot bertanya satu per satu lalu menyimpulkan', () => {
+  const start = converse('Aku lagi ditawarin kerja');
+  assert.match(start.replies[0][0].text, /loker palsu/);
+  assert.equal(start.last.text, INTERVIEWS['loker-palsu'].questions[0].ask);
+  assert.equal(start.last.note, 'Pertanyaan 1 dari 3');
+  assert.deepEqual(start.last.actions.map((action) => action.label), ['Iya', 'Nggak', 'Nggak tahu']);
+
+  const done = converse('Aku lagi ditawarin kerja', 'iya', 'iya bgt', 'nggak');
+  assert.equal(done.last.level, 'tinggi');
+  assert.equal(done.last.list.length, 2);
+  assert.equal(done.context.flow, null);
+  assert.deepEqual(done.context.topic, { kind: 'scenario', id: 'loker-palsu' });
+
+  const calm = converse('Aku lagi ditawarin kerja', 'nggak', 'nggak', 'gatau');
+  assert.equal(calm.last.level, 'rendah');
+  assert.match(calm.last.note, /nggak tahu/);
+});
+
+test('detail di cerita langsung dihitung, pertanyaannya tidak diulang', () => {
+  const { replies, last } = converse('ada yang chat nawarin kerja admin online gaji 8 juta tapi suruh bayar pelatihan 150rb');
+  assert.match(replies[0][0].text, /sudah lihat 2 tanda bahaya/);
+  assert.equal(last.text, INTERVIEWS['loker-palsu'].questions[2].ask);
+
+  // Jawaban yang menyebut detail lain ikut mengisi pertanyaan berikutnya.
+  const filled = converse('Aku lagi ditawarin kerja', 'iya, katanya gaji tinggi juga');
+  assert.equal(filled.last.text, INTERVIEWS['loker-palsu'].questions[2].ask);
+});
+
+test('jawaban tidak jelas ditanya ulang sekali, lalu dianggap nggak tahu', () => {
+  const once = converse('Aku lagi ditawarin kerja', 'hmm');
+  assert.equal(once.last.text, INTERVIEWS['loker-palsu'].questions[0].ask);
+  assert.match(once.last.note, /Jawab "iya"/);
+  const twice = converse('Aku lagi ditawarin kerja', 'hmm', 'hmm');
+  assert.equal(twice.last.text, INTERVIEWS['loker-palsu'].questions[1].ask);
+});
+
+test('di tengah wawancara: kejadian darurat, ganti topik, dan batal tetap ditangani', () => {
+  assert.equal(converse('Aku lagi ditawarin kerja', 'iya aku udah transfer').last.actions[0].incidentId, 'transfer');
+  assert.match(converse('Aku lagi ditawarin kerja', 'lapor ke mana?').last.text, /Kanal lapor/);
+  const cancelled = converse('Aku lagi ditawarin kerja', 'batal');
+  assert.match(cancelled.last.text, /nggak apa-apa/);
+  assert.equal(cancelled.context.flow, null);
+});
+
+test('setiap modus punya wawancara dan kalimat pembuka yang memulainya', () => {
+  for (const [scenarioId, interview] of Object.entries(INTERVIEWS)) {
+    assert.equal(detectIntent(interview.storyMessage)?.scenarioId, scenarioId, interview.storyMessage);
+    assert.ok(interview.questions.length >= 2, scenarioId);
+    assert.ok(INCIDENTS.some((incident) => incident.id === interview.incidentId), scenarioId);
+    const { context } = converse(interview.storyMessage);
+    assert.ok(context.flow || context.topic, scenarioId);
+  }
+});
+
+test('pertanyaan lanjutan nyambung ke topik terakhir', () => {
+  assert.match(converse('Apa ciri loker palsu?', 'contohnya?').last.text, /Contoh chat loker palsu/);
+  assert.match(converse('Apa ciri loker palsu?', 'cara menghindarinya?').last.text, /Biar nggak kena loker palsu/);
+  assert.equal(converse('ciri investasi bodong apa?', 'kalau udah telanjur gimana?').last.actions[0].incidentId, 'transfer');
+  assert.match(converse('cara menghindari pinjol ilegal').last.text, /Biar nggak kena pinjol ilegal/);
+});
+
+test('setelah langkah darurat, "terus?" memberi langkah berikutnya', () => {
+  const steps = converse('aku udah kasih OTP', 'terus?', 'terus apa lagi?');
+  assert.deepEqual(steps.replies[1][0].list, INCIDENTS.find((incident) => incident.id === 'otp').today);
+  assert.match(steps.last.text, /pesan peringatan/);
+});
+
+test('perasaan ditanggapi, tidak paham memberi petunjuk sesuai topik', () => {
+  assert.match(firstReply('aku panik banget').text, /Tarik napas/);
+  const lost = converse('Apa ciri loker palsu?', 'resep nasi goreng');
+  assert.match(lost.last.text, /belum paham/);
+  assert.match(lost.last.note, /loker palsu/);
+});
+
+test('variasi kalimat bergantian', () => {
+  const { replies } = converse('makasih', 'makasih');
+  assert.notEqual(replies[0][0].text, replies[1][0].text);
+});
+
+test('detail spesifik mengalahkan kata "ga" di dalamnya, penyangkal tetap dihormati', () => {
+  const refused = converse('Temenku tiba-tiba minta pinjem duit', 'iya bahasanya aneh', 'dia ga mau ditelpon');
+  assert.equal(refused.last.list.length, 3);
+  const unpaid = converse('Aku lagi ditawarin kerja', 'belum bayar sih');
+  assert.equal(unpaid.last.text, INTERVIEWS['loker-palsu'].questions[1].ask);
+  assert.equal(unpaid.context.flow.answers[0], 'no');
+});
+
+test('info yang disebut belakangan mengoreksi jawaban sebelumnya', () => {
+  const { last } = converse('aku dapet dm menang giveaway', 'nggak', 'disuruh bayar ongkir 50rb', 'nggak');
+  assert.equal(last.level, 'tinggi');
+  assert.ok(last.list.includes(INTERVIEWS['giveaway-palsu'].questions[1].flag));
+});
+
+test('singkatan lanjutan dan kontak mencurigakan dikenali', () => {
+  assert.match(converse('aku udah transfer', 'trs gmn').last.text, /masih hari ini/);
+  const sms = respond('knp ya aku sering dapat sms aneh', INITIAL_BOT_CONTEXT);
+  assert.equal(sms.context.awaitingCheck, true);
+});
