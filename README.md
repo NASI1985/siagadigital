@@ -22,15 +22,15 @@ npm run dev
 
 Buka alamat yang muncul di terminal (biasanya `http://localhost:5173`).
 
-| Perintah | Fungsi |
-|---|---|
-| `npm run dev` | Server pengembangan dengan hot reload |
-| `npm test` | Menjalankan semua test (`node --test`, tanpa library tambahan) lalu `npm run eval` |
-| `npm run audit:words` | Memeriksa daftar kata deteksi (duplikat, huruf besar, bentrok frasa aman, jumlah minimum) |
-| `npm run explain -- "teks"` | Menunjukkan kata/pola mana yang cocok di sebuah teks dan kenapa |
-| `npm run eval` | Mengukur deteksi pada korpus `tests/corpus/` (recall per kategori, salah tuduh) |
-| `npm run build` | Build produksi ke folder `dist/` |
-| `npm run preview` | Menjalankan hasil build secara lokal |
+| Perintah                    | Fungsi                                                                                    |
+| --------------------------- | ----------------------------------------------------------------------------------------- |
+| `npm run dev`               | Server pengembangan dengan hot reload                                                     |
+| `npm test`                  | Menjalankan semua test (`node --test`, tanpa library tambahan) lalu `npm run eval`        |
+| `npm run audit:words`       | Memeriksa daftar kata deteksi (duplikat, huruf besar, bentrok frasa aman, jumlah minimum) |
+| `npm run explain -- "teks"` | Menunjukkan kata/pola mana yang cocok di sebuah teks dan kenapa                           |
+| `npm run eval`              | Mengukur deteksi pada korpus `tests/corpus/` (recall per kategori, salah tuduh)           |
+| `npm run build`             | Build produksi ke folder `dist/`                                                          |
+| `npm run preview`           | Menjalankan hasil build secara lokal                                                      |
 
 ## Peta folder
 
@@ -80,6 +80,7 @@ dengan mesin pengecekan), lalu dijawab dari data yang sudah ada. Riwayat chat ha
 dan hilang saat halaman ditutup.
 
 Supaya terasa seperti ngobrol:
+
 - **Bahasa gaul & salah ketik** dirapikan dulu (`SLANG`, `VOCABULARY`): "gw udh tf" → "aku udah
   transfer", "dibjak" → "dibajak". Koreksi hanya untuk kata 6+ huruf yang beda tepat satu huruf.
   Kalau ada kata asli yang ikut "dikoreksi", tambahkan ke `REAL_WORDS`.
@@ -92,6 +93,7 @@ Supaya terasa seperti ngobrol:
 - **Variasi kalimat**: teks berupa daftar di `BOT_TEXT` dipakai bergantian.
 
 Urutan keputusan bot (`respond()` di `src/lib/chatbot.js`):
+
 1. Pesan berawalan `cek:` → isi pesannya dicek dengan analyzer.
 2. "batal" saat wawancara atau mode cek → berhenti.
 3. Cerita "sudah kena" (udah transfer, udah kasih OTP, akun dibajak, data bocor, kepencet link)
@@ -113,16 +115,17 @@ Untuk menambah kata kunci atau pertanyaan wawancara, ubah `src/data/chatbot.js` 
 ## Cara menambah konten
 
 ### Kata deteksi baru
+
 Semua kata ada di `src/data/words/`, satu file per kategori (misalnya `pinjol.js`, `kode-rahasia.js`).
 Tulis semua entri dengan **huruf kecil**. Tiap file punya beberapa daftar:
 
-| Daftar | Kapan dipakai | Contoh |
-|---|---|---|
-| `words` | Kata/frasa **bentuk dasar**. Imbuhan dikenali otomatis. | `'transfer dulu'` juga cocok dengan "ditransferin dulu" |
-| `exact` | Singkatan, salah ketik, bahasa Inggris: dicocokkan **apa adanya** tanpa imbuhan. | `'tf dulu'`, `'admin fee'` |
-| `ambiguous` | Kata yang sering muncul di pesan biasa. Baru dihitung kalau di kalimat yang sama ada kata kuat dari aturan ini atau kata "jangkar" (`anchors`). | `'pajak'`, `'ongkir'` |
-| `near` | Dua kelompok kata dari `groups.js` yang berdekatan (`within` = jarak kata). | `{ a: 'VERB_PAY', b: 'FEE_NOUNS', within: 4 }` |
-| `patterns` | Regex lewat `pola(...)` untuk hal yang butuh angka/URL. | `biaya pendaftaran Rp150.000` |
+| Daftar      | Kapan dipakai                                                                                                                                   | Contoh                                                  |
+| ----------- | ----------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `words`     | Kata/frasa **bentuk dasar**. Imbuhan dikenali otomatis.                                                                                         | `'transfer dulu'` juga cocok dengan "ditransferin dulu" |
+| `exact`     | Singkatan, salah ketik, bahasa Inggris: dicocokkan **apa adanya** tanpa imbuhan.                                                                | `'tf dulu'`, `'admin fee'`                              |
+| `ambiguous` | Kata yang sering muncul di pesan biasa. Baru dihitung kalau di kalimat yang sama ada kata kuat dari aturan ini atau kata "jangkar" (`anchors`). | `'pajak'`, `'ongkir'`                                   |
+| `near`      | Dua kelompok kata dari `groups.js` yang berdekatan (`within` = jarak kata).                                                                     | `{ a: 'VERB_PAY', b: 'FEE_NOUNS', within: 4 }`          |
+| `patterns` | Regex lewat `pola(...)` untuk hal yang butuh angka/URL. | `biaya pendaftaran Rp150.000`, `biaya pelatihan EUR 250` |
 
 Contoh menambah kata ke kategori pinjol:
 
@@ -134,21 +137,26 @@ ambiguous: [ ..., 'limit' ],            // butuh kata pinjol lain di kalimat yan
 ```
 
 Aturan menulis:
+
 - Kata di `words` minimal 4 huruf (kata pendek masuk `exact`).
 - Jangan menulis bentuk berimbuhan di `exact` kalau bentuk dasarnya sudah ada di `words`.
 - Kalau sebuah frasa biasa ikut tertuduh (misalnya "bayar listrik"), tambahkan ke `src/data/words/safe.js`.
   Kecocokan yang bertumpuk dengan frasa aman dibuang.
 - Regex di `pola(...)` ditulis dengan `String.raw`, pakai grup `(?:...)`, dan **jangan pakai lookbehind**
   (`(?<=`, `(?<!`) supaya tetap jalan di Safari lama.
+- Pengenal nominal mencakup IDR, simbol mata uang, dan kode umum seperti USD, EUR, GBP, JPY, SGD, serta MYR,
+  baik sebelum maupun sesudah angka. Nilai mata uang asing dikenali sebagai nominal tetapi tidak dikonversi ke IDR.
 
 Bobot: 3 = kuat (sorot merah), 2 = mencurigakan, 1 = lemah (sorot kuning). Di teks `why`, `{match}`
 diganti dengan frasa pertama yang ditemukan. Setelah mengubah kata, jalankan `npm run audit:words` lalu `npm test`.
 
 ### Cara kerja imbuhan dan perapian teks
+
 - **Imbuhan** (`src/lib/affix.js`): setiap kata di pesan dipotong akhirannya (-kan, -an, -i, -in, -nya,
   -lah, -kah, -pun, -ku, -mu) dan awalannya (me-, di-, ter-, ber-, pe-, ke-, se-, nge-, dst.), termasuk
-  peluluhan (mentransfer → transfer, menyetor → setor, ngirim → kirim). Hasil potongan dicocokkan dengan
-  bentuk dasar di `words`. Sisa potongan minimal 4 huruf supaya kata sehari-hari tidak ikut tertuduh.
+  peluluhan (mentransfer → transfer, menyetor → setor, ngirim → kirim) dan gabungan maksimal dua awalan
+  (diperjualbelikan → jualbeli). Hasil potongan dicocokkan dengan bentuk dasar di `words`. Sisa potongan
+  minimal 4 huruf supaya kata sehari-hari tidak ikut tertuduh.
 - **Perapian** (`src/lib/normalize.js`): sebelum dicocokkan, teks dirapikan: huruf mirip dari abjad lain
   (Kiril/Yunani) diganti huruf biasa, tanda aksen dibuang, karakter tak terlihat dihapus, angka pengganti
   huruf di tengah kata dibaca sebagai huruf (`tr4nsf3r` → transfer), huruf berspasi disatukan
@@ -159,6 +167,7 @@ diganti dengan frasa pertama yang ditemukan. Setelah mengubah kata, jalankan `np
   peringatan.
 
 ### Merawat deteksi (kalau ada penipuan yang lolos)
+
 1. Tambahkan contoh pesannya (disamarkan, fiktif) ke `tests/corpus/scam.jsonl`:
    `{"text":"...","category":"pinjol","minLevel":"sedang"}`.
 2. Jalankan `npm run explain -- "isi pesan"` untuk melihat apa yang sudah/belum cocok.
@@ -171,6 +180,7 @@ Aplikasi **tidak mengirim data apa pun**: semua pengecekan berjalan di browser, 
 manual oleh pengembang.
 
 ### Batasan
+
 - Ini **pencocokan pola, bukan AI**. Penipuan dengan kata-kata baru bisa lolos sampai daftarnya diperbarui.
 - Tidak membaca gambar, suara, atau isi tautan; hanya teks yang ditempel (maksimal 8.000 karakter).
 - Hasil **"Rendah" bukan bukti aman**. Tetap cek lewat kanal resmi.
@@ -178,6 +188,7 @@ manual oleh pengembang.
   daerah perlu ditinjau penutur asli.
 
 ### Skenario latihan baru
+
 Tambahkan objek ke `SCENARIOS` di `src/data/scenarios.js`:
 
 ```js
@@ -204,12 +215,14 @@ dihitung otomatis dari data. Test `src/lib/practice.test.js` memvalidasi struktu
 juga mengunci jumlahnya di 6 × 5; ubah konstanta di test kalau jumlahnya memang sengaja ditambah).
 
 ### Item checklist baru
+
 Tambahkan objek `{ id, label, nextStep, howTo }` ke `src/data/securityChecklist.js`.
 `nextStep` ditulis sebagai frasa pendek huruf kecil, misalnya `'kunci profil'`.
 
 ## Penyimpanan
 
 Hanya dua hal yang disimpan di `localStorage`:
+
 - `siagadigital.skorLatihan.v1` → `{ idSkenario: skorTerbaik }`
 - `siagadigital.checklist.v1` → `{ idItem: true }`
 
@@ -220,6 +233,7 @@ nilai default tanpa crash (dites di `src/lib/storage.test.js`). Teks yang ditemp
 ## Keputusan desain
 
 ### Sudah diputuskan di spesifikasi (bagian 2a)
+
 - Tombol di hasil Cek Dulu berlabel **"Periksa ulang"** dan kembali ke langkah 2 dengan teks tetap terisi.
 - Tombol **"Coba contoh fiktif"** ada di bawah textarea, di atas kotak kuning.
 - Toast setelah "Salin" berbunyi **"Tersalin"**.
@@ -231,6 +245,7 @@ nilai default tanpa crash (dites di `src/lib/storage.test.js`). Teks yang ditemp
   `umpan-hadiah` ("terpilih sebagai admin online") ikut terdeteksi.
 
 ### Keputusan sendiri
+
 - **Branch kerja `NASI1985`** (bukan `nasi-1985` seperti di spesifikasi), sesuai permintaan pemilik repo.
 - **Vite 6.4.5**, bukan Vite 5: Vite 5 punya beberapa kerentanan di dev server (sebagian khusus Windows).
   Setelah upgrade, `npm audit` bersih.
@@ -279,3 +294,16 @@ nilai default tanpa crash (dites di `src/lib/storage.test.js`). Teks yang ditemp
 Hasil pengecekan hanyalah indikasi dari pola umum. Hasil “rendah” bukan bukti aman, dan skor latihan
 bukan jaminan kebal tipuan. Selalu verifikasi lewat kanal resmi (cekrekening.id, OJK 157, aduannomor.id).
 Semua contoh dan percakapan di aplikasi ini fiktif.
+
+## Kredit
+
+- **Designer**: Naufal Azka Fadhilah
+- **Programmer**:
+  - Alif
+  - Sajad
+  - Ibrohim
+- **Tools**:
+  - Claude Pro
+  - Github
+  - Vercel
+- **Framework**: React

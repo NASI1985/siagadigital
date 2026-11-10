@@ -32,6 +32,9 @@ test('rootCandidates: tolok ukur bentuk baku dan gaul kembali ke kata dasarnya',
     menarik: 'tarik',
     akunmu: 'akun',
     bayar2: 'bayar',
+    menyebarkannya: 'sebar',
+    diperjualbelikan: 'jualbeli',
+    memperjualbelikan: 'jualbeli',
   };
   for (const [word, root] of Object.entries(cases)) {
     assert.ok(rootCandidates(word).includes(root), `${word} -> ${root} (dapat: ${rootCandidates(word).join(', ')})`);

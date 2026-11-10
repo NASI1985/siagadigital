@@ -4,6 +4,7 @@
 
 export const MIN_ROOT_LENGTH = 4;
 const MAX_SUFFIX_ROUNDS = 2;
+const MAX_PREFIX_ROUNDS = 2;
 
 // Akhiran yang boleh dibuang (maksimal 2 kali berturut-turut). -in = gaul (bayarin),
 // -ku/-mu = kata ganti milik (akunmu, rekeningku).
@@ -69,19 +70,27 @@ function stripSuffixes(word) {
   return forms;
 }
 
+function addPrefixCandidates(form, result, round = 0) {
+  if (round === MAX_PREFIX_ROUNDS) return;
+  for (const [prefix, restores] of PREFIXES) {
+    if (!form.startsWith(prefix) || form.length <= prefix.length) continue;
+    const rest = form.slice(prefix.length);
+    for (const letter of restores) {
+      const candidate = letter + rest;
+      if (candidate.length < MIN_ROOT_LENGTH || result.has(candidate)) continue;
+      result.add(candidate);
+      addPrefixCandidates(candidate, result, round + 1);
+    }
+  }
+}
+
 function computeCandidates(word) {
   let base = word.toLowerCase();
   if (REDUPLICATION_DIGIT.test(base)) base = base.slice(0, -1); // bayar2 -> bayar
 
   const forms = stripSuffixes(base);
   const result = new Set(forms);
-  for (const form of forms) {
-    for (const [prefix, restores] of PREFIXES) {
-      if (!form.startsWith(prefix) || form.length <= prefix.length) continue;
-      const rest = form.slice(prefix.length);
-      for (const letter of restores) result.add(letter + rest);
-    }
-  }
+  for (const form of forms) addPrefixCandidates(form, result);
   return [...result].filter((candidate) => candidate.length >= MIN_ROOT_LENGTH);
 }
 

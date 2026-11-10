@@ -19,6 +19,8 @@ export default {
     'biaya aktivasi akun', 'biaya pembukaan akun', 'biaya verifikasi akun', 'biaya sertifikasi', 'biaya kode unik',
     'biaya pelunasan', 'biaya penyelesaian', 'biaya penarikan saldo', 'biaya withdraw', 'biaya pencairan dana',
     'biaya pencairan pinjaman', 'biaya pencairan hadiah', 'biaya pengurusan hadiah', 'biaya pengurusan dokumen',
+    'biaya bea cukai', 'biaya kepabeanan', 'biaya clearance paket', 'biaya clearance barang',
+    'biaya validasi saldo', 'biaya validasi hadiah', 'biaya pemulihan saldo', 'uang validasi',
     'uang pendaftaran', 'uang registrasi', 'uang administrasi', 'uang jaminan', 'uang pelicin', 'uang tebusan',
     'uang komitmen', 'uang keamanan', 'uang pengurusan', 'uang seragam', 'uang pelatihan', 'uang deposit',
     'uang materai', 'uang asuransi', 'uang verifikasi', 'uang aktivasi', 'uang pencairan', 'uang penarikan',
@@ -42,6 +44,8 @@ export default {
     'tf deposit', 'tf biaya', 'trf biaya', 'tf pendaftaran', 'tf registrasi', 'tf admin', 'tf pajak', 'bya admin',
     'biaya adm', 'by admin', 'biaya regist', 'biaya regis', 'biaya pendaftran', 'biaya regristasi', 'biaya registasi',
     'biaya adminstrasi', 'biaya administarsi', 'biaya aktifasi', 'biaya pndftrn', 'byr pendaftaran', 'byr admin',
+    'customs clearance fee', 'release fee', 'withdrawal fee', 'verification fee', 'pay customs fee',
+    'pay release fee', 'fee to release package', 'fee before withdrawal',
   ],
   ambiguous: [
     'biaya admin', 'biaya administrasi', 'biaya layanan', 'denda', 'ongkos kirim', 'ongkir', 'pajak', 'jaminan',
@@ -53,7 +57,7 @@ export default {
   patternsStrong: true,
   patterns: [
     pola(
-      String.raw`biaya\s+(?:pendaftaran|registrasi|pelatihan|training|aktivasi|seragam|pencairan|materai|meterai|verifikasi|pengurusan)${AMOUNT}`,
+      String.raw`biaya\s+(?:pendaftaran|registrasi|pelatihan|training|aktivasi|seragam|pencairan|materai|meterai|verifikasi|pengurusan|bea\s+cukai|kepabeanan|clearance(?:\s+(?:paket|barang))?|validasi\s+(?:saldo|hadiah)|pemulihan\s+saldo)${AMOUNT}`,
       String.raw`(?:deposit|tebusan|pajak\s+(?:hadiah|pencairan|pemenang))${AMOUNT}`,
     ),
     pola(String.raw`(?:transfer|tranfer|tf|trf|bayar|setor|kirim)\s+(?:uang\s+)?${NOMINAL}\s+(?:dulu|duluan|dl|dlu|di\s+awal|di\s+muka)`),

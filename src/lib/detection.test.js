@@ -126,6 +126,38 @@ test('D. segmen digabung = teks asli untuk emoji, baris baru, tab, karakter leba
   for (const text of samples) assert.equal(joined(analyze(text)), text);
 });
 
+test('D. biaya dalam mata uang asing tetap dikenali sebelum dan sesudah nominal', () => {
+  const examples = [
+    'Biaya pelatihan EUR 250',
+    'Biaya pelatihan 250 SGD',
+    'Biaya pelatihan £250',
+    'Biaya pelatihan US$250',
+    'Biaya pelatihan 250 euros',
+    'Biaya bea cukai 100 MYR',
+    'Biaya bea cukai SEK 100',
+    'Biaya clearance paket yen 50000',
+  ];
+  for (const text of examples) {
+    const result = analyze(text);
+    assert.ok(ruleIds(result).includes('uang-di-muka'), text);
+    assert.ok(highlighted(result).some((mark) => mark === text), `${text}: ${highlighted(result).join(' | ')}`);
+  }
+});
+
+test('D. imbuhan pada kata bahaya tetap dikenali dalam pesan utuh', () => {
+  const paymentText = 'Kamu wajib membayar dulu.';
+  const paymentResult = analyze(paymentText);
+  assert.ok(ruleIds(paymentResult).includes('uang-di-muka'));
+  assert.ok(highlighted(paymentResult).some((mark) => mark.includes('membayar')));
+  assert.equal(joined(paymentResult), paymentText);
+
+  const transferText = 'Dana ditransferkan ke rekening pribadi.';
+  const transferResult = analyze(transferText);
+  assert.ok(ruleIds(transferResult).includes('rekening-pribadi'));
+  assert.ok(highlighted(transferResult).some((mark) => mark.includes('ditransferkan ke rekening pribadi')));
+  assert.equal(joined(transferResult), transferText);
+});
+
 // ---------------------------------------------------------------------------
 // E. Negatif: tidak boleh Tinggi; yang jelas aman harus Rendah tanpa temuan.
 
